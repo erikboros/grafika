@@ -1,0 +1,5 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Clifford.vcxproj, Complex.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  framework.cpp
+  bezier.cpp
+  Generating Code...
+  Bezier.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\E\3_Geom_mod\Debug\Bezier.exe

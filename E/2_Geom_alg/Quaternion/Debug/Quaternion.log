@@ -1,0 +1,13 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Clifford.vcxproj, Complex.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  quaternion.cpp
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(68): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(105): warning C4018: '<': signed/unsigned mismatch
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(76): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(141): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(142): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(143): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(144): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(145): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\e\2_geom_alg\quaternion\quaternion.cpp(146): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Quaternion.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\E\2_Geom_alg\Debug\Quaternion.exe
