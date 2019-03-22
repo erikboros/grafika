@@ -1,0 +1,3 @@
+﻿  framework.cpp
+  Skeleton.cpp
+LINK : fatal error LNK1181: cannot open input file 'glew32.lib'
