@@ -1,17 +1,7 @@
 ﻿  Skeleton.cpp
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(96): warning C4244: 'argument': conversion from 'unsigned int' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=float
-          ]
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(136): warning C4018: '<': signed/unsigned mismatch
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(145): warning C4018: '<': signed/unsigned mismatch
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(222): warning C4018: '<': signed/unsigned mismatch
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(363): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(364): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(365): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(366): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(367): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(429): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(229): warning C4715: 'CatmullRom::r': not all control paths return a value
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(96): warning C4018: '<': signed/unsigned mismatch
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(111): warning C4018: '<': signed/unsigned mismatch
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(191): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(232): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(104): warning C4715: 'CatmullRom::r': not all control paths return a value
   Skeleton.vcxproj -> C:\Users\Erik\Documents\GitHub\grafika\HF1\bin\Skeleton.exe
