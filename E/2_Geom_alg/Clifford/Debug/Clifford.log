@@ -1,1 +1,6 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.WindowsSDK.targets(46,5): error MSB8036: The Windows SDK version 10.0.16299.0 was not found. Install the required version of Windows SDK or change the SDK version in the project property pages or by right-clicking the solution and selecting "Retarget solution".
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Complex.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  framework.cpp
+  clifford.cpp
+  Generating Code...
+  LINK : C:\Users\boros\Documents\GitHub\grafika\E\2_Geom_alg\Debug\Clifford.exe not found or not built by the last incremental link; performing full link
+  Clifford.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\E\2_Geom_alg\Debug\Clifford.exe
