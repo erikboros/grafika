@@ -78,17 +78,13 @@ private:
 	unsigned int vbo; // vertex buffer object
 	boolean updated = false;
 
-
-
 public:
 	void init() {
 		glGenVertexArrays(2, &vao[0]);	// get 1 vao id
-										//glBindVertexArray(vao[0]);		// make it active
-										//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		//glBindVertexArray(vao[0]);		// make it active
+		//glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glGenBuffers(1, &vbo);
 	}
-
-	
 
 	void addPoint(vec2 cpt, float t) {
 		points.push_back(cpt);
@@ -97,6 +93,11 @@ public:
 		std::sort (points.begin(), points.end(), compareVec2x);
 		updated = true;
 		
+	}
+
+	int getMaxTs() {
+		//using that last is the biggest
+		return ts[ts.size()-1];
 	}
 
 	vec2 hermite(vec2 p0, vec2 v0, float t0, vec2 p1, vec2 v1, float t1, float t) {
@@ -139,7 +140,6 @@ public:
 				updated = false;
 			}
 
-
 			///Draw spline
 			glBindVertexArray(vao[0]);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -167,7 +167,6 @@ public:
 																		//glBindVertexArray(vao);		// Draw call
 			glDrawArrays(GL_LINE_STRIP, 0 /*startIdx*/, rt.size() /*# Elements*/);
 
-
 			///Draw control points
 			glBindVertexArray(vao[1]);		// make it active
 											//glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -180,12 +179,11 @@ public:
 				2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 				0, NULL);					// stride, offset: tightly packed
 			location = glGetUniformLocation(gpuProgram.getId(), "color");
-			glUniform3f(location, 1.0f, 0.0f, 0.0f); // 3 floats
+			glUniform3f(location, 0.0f, 0.0f, 1.0f); // 3 floats
 			location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
 			glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 																		//glBindVertexArray(vao);		// Draw call
 			glDrawArrays(GL_POINTS, 0 /*startIdx*/, points.size() /*# Elements*/);
-
 		}
 	}
 };
@@ -197,6 +195,7 @@ private:
 	unsigned int vbo;
 	unsigned int startTime;
 	std::vector<vec2> cps;
+	float v = 0.2f;
 
 
 	boolean first = true;
@@ -225,7 +224,7 @@ public:
 			startTime = sec;
 			first = false;
 		}
-		sec = sec - startTime;
+		
 
 		glBindVertexArray(tvao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -243,23 +242,34 @@ public:
 		int location = glGetUniformLocation(gpuProgram.getId(), "color");
 		glUniform3f(location, 1.0f, 0.0f, 1.0f); // 3 floats
 
-		/*
-		float MVPtransf[4][4] =	{	1, 0, 0, 0,		// új x
-		0, 1, 0, 0,		// új y
-		0, 0, 1, 0,		// új Z
-		0, 0, 0, 1 };	//eltolás
-		*/
-		/*
-		float MVPtransf[4][4] = {	cos(sec*M_PI), sin(sec*M_PI), 0, 0,		// új x
-		-sin(sec*M_PI), cos(sec*M_PI), 0, 0,		// új y
-		0, 0, 1, 0,		// új Z
-		cos(sec*M_PI), sin(sec*M_PI), 0, 1 };	//eltolás
-		*/
+		vec2 pos;
+		sec = sec - startTime;
+		
+ 
+		int maxt = cr.getMaxTs()-1;
+		int h = sec / maxt;
+		if (h%2==0){
+			//elõre megyünk
+			sec = (float)sec - (float)(h*maxt);
 
+			/*
+			float a = 3.1f;
+			float b = 6.2f;
+			int t = 5;
 
-		float v = 0.2f;
-		vec2 pos = cr.r(v*sec);
-
+			int h = b / t;
+			printf("int hányados: %d\n", h);
+			int m = h % 2;
+			printf("int modulus: %d\n", m);
+			float truet = t - (b - h * t);
+			printf("float truet: %f\n", truet);
+			*/
+		}
+		else {
+			sec = maxt - (sec - h * maxt);
+		}
+		pos = cr.r(sec);
+		
 		float MVPtransf[4][4] = { 1, 0, 0, 0,		// új x
 			0, 1, 0, 0,		// új y
 			0, 0, 1, 0,		// új Z
@@ -273,13 +283,6 @@ public:
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, cps.size() /*# Elements*/);
 	}
 
-	float dist(vec2 a, vec2 b) {
-		vec2 c = a - b;
-		return sqrtf(c.x * c.x + c.y * c.y);
-	}
-	float len(vec2 a) {
-		return sqrtf(a.x * a.x + a.y * a.y);
-	}
 };
 
 
@@ -292,6 +295,9 @@ thing t1;
 
 // Initialization, create an OpenGL context
 void onInitialization() {
+
+	
+
 	glViewport(0, 0, windowWidth, windowHeight);
 	glLineWidth(2);
 	glPointSize(5);
@@ -299,8 +305,12 @@ void onInitialization() {
 	// create program for the GPU
 	gpuProgram.Create(vertexSource, fragmentSource, "outColor");
 
+	
+
 	cr.init();
 	t1.init();
+
+
 }
 
 // Window has become invalid: Redraw
@@ -327,7 +337,9 @@ void onDisplay() {
 
 // Key of ASCII code pressed
 void onKeyboard(unsigned char key, int pX, int pY) {
-	if (key == 'd') glutPostRedisplay();         // if d, invalidate display, i.e. redraw
+	if (key == 'd') {
+		glutPostRedisplay();         // if d, invalidate display, i.e. redraw
+	}
 }
 
 // Key of ASCII code released
@@ -339,7 +351,7 @@ void onMouseMotion(int pX, int pY) {	// pX, pY are the pixel coordinates of the 
 	// Convert to normalized device space
 	float cX = 2.0f * pX / windowWidth - 1;	// flip y axis
 	float cY = 1.0f - 2.0f * pY / windowHeight;
-	printf("Mouse moved to (%3.2f, %3.2f)\n", cX, cY);
+	//printf("Mouse moved to (%3.2f, %3.2f)\n", cX, cY);
 }
 
 // Mouse click event
@@ -356,16 +368,17 @@ void onMouse(int button, int state, int pX, int pY) { // pX, pY are the pixel co
 
 	switch (button) {
 	case GLUT_LEFT_BUTTON:   
-		printf("Left button %s at (%3.2f, %3.2f)\n", buttonStat, cX, cY);
+		//printf("Left button %s at (%3.2f, %3.2f)\n", buttonStat, cX, cY);
 		if (buttonStat == "pressed"){
 			cr.addPoint(vec2(cX, cY), n++);
 			glutPostRedisplay();
 		}
 		
 		break;
-	case GLUT_MIDDLE_BUTTON: printf("Middle button %s at (%3.2f, %3.2f)\n", buttonStat, cX, cY); break;
+	case GLUT_MIDDLE_BUTTON: //printf("Middle button %s at (%3.2f, %3.2f)\n", buttonStat, cX, cY); break;
 	case GLUT_RIGHT_BUTTON:  
-		printf("Right button %s at (%3.2f, %3.2f)\n", buttonStat, cX, cY); 
+		//printf("Right button %s at (%3.2f, %3.2f)\n", buttonStat, cX, cY); 
+
 		if (buttonStat == "pressed") {
 			glutPostRedisplay();
 		}
