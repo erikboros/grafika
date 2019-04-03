@@ -95,15 +95,50 @@ public:
 
 	void addPoint(vec2 cpt, float t) {
 		points.push_back(cpt);
-		ts.push_back(t);
+		
+		std::sort (points.begin(), points.end(), compareVec2x); //*********************************TODO: WAT
 
-		std::sort (points.begin(), points.end(), compareVec2x); //TODO: WAT
+		//ts.push_back(t);
+
+		//calculate ts / t according to x coordinate
+		//ts[0] = 0.0f
+		/*
+		std::vector<float> tt;
+		tt.push_back(0.0f); printf("t0: %f\n", 0.0f);//tt[0]
+		for (int i = 1; i < points.size(); i++){
+			tt.push_back(tt[i-1] + (points[i].x - points[i-1].x));
+			printf("t%d: %f\n", i, tt[i - 1] + (points[i].x - points[i - 1].x));
+		}
+		*/
+		ts.clear();
+		ts.push_back(0.0f); //printf("t0: %f\n", 0.0f);//tt[0]
+		for (int i = 1; i < points.size(); i++) {
+			ts.push_back(ts[i - 1] + (points[i].x - points[i - 1].x));
+			//printf("t%d: %f\n", i, ts[i - 1] + (points[i].x - points[i - 1].x));
+		}
+
+
 		updated = true;
 	}
 
-	int getMaxTs() {
+	float getMaxTs() {
 		//using monoton building
-		return (int)floor(ts[ts.size()-1]);
+		//return (int)floor(ts[ts.size()-1]);
+		return ts[ts.size() - 1];
+	}
+
+	float getMaxDrawTs() {
+		//using monoton building
+		//return (int)floor(ts[ts.size()-1]);
+
+		if (ts.size() > 2) {
+			//printf("cr:getmaxdrawt: %f", ts[ts.size() - 2]);
+			return ts[ts.size() - 2];
+		}
+		else {
+			return 0.0f;
+		}
+		
 	}
 
 	vec2 hermite(vec2 p0, vec2 v0, float t0, vec2 p1, vec2 v1, float t1, float t) {
@@ -160,7 +195,7 @@ public:
 
 					float max = getMaxTs();
 
-					for (float t = 0.0f; t < max; t += 0.1f) {
+					for (float t = 0.0f; t < max; t += 0.01f) {
 						vec2 tmp = r(t);
 						rt.push_back(tmp);
 						//printf("t:%f (%f,%f)\n", t, tmp.x, tmp.y);
@@ -217,7 +252,7 @@ public:
 
 /**
 * "Monocikli"
-* Egy CatmullRom ts pointjait képes követni
+* Egy CatmullRom pointjait képes követni
 * a spline adott idõbeli normálvektával a kerék sugarával eltolva
 */
 class cycle {
@@ -225,7 +260,7 @@ private:
 	unsigned int vao[2];
 	unsigned int vbo;
 	unsigned int startTime;
-	float v = 4.0f;
+	float v = 0.5f;
 
 	std::vector<vec2> cps;
 	float wheelr = 0.05f;
@@ -269,9 +304,9 @@ public:
 		}
 		
 		vec2 pos;
-		sec = sec - startTime;
+		sec = (sec - startTime)*v;
 
-		int maxt = cr.getMaxTs() - 1;
+		float maxt = cr.getMaxDrawTs(); //printf("cycl:draw:maxt: %f\n", maxt);
 		int h = sec / maxt;
 		if (h % 2 == 0) { //elõre megyünk
 			sec = (float)sec - (float)(h*maxt);
@@ -324,8 +359,9 @@ public:
 		location = glGetUniformLocation(gpuProgram.getId(), "color");
 		glUniform3f(location, 1.0f, 0.0f, 1.0f); // 3 floats
 
-		float MVPtransfrim[4][4] = {	cos(sec*v), -sin(sec*v), 0, 0,		// új x
-										sin(sec*v), cos(sec*v), 0, 0,		// új y
+		float vmulti = v * 20;
+		float MVPtransfrim[4][4] = {	cos(sec*vmulti), -sin(sec*vmulti), 0, 0,		// új x
+										sin(sec*vmulti), cos(sec*vmulti), 0, 0,		// új y
 										0, 0, 1, 0,		// új Z
 										pos.x, pos.y, 0, 1 };	//eltolás
 
@@ -337,16 +373,23 @@ public:
 
 
 CatmullRom cr;
-CatmullRom bg; //TODO:
+CatmullRom bg; //************************************************************TODO:
 int n=0;
 cycle t1;
+
+/*
+int fps = 0;
+int prevsec = 0;
+float unusedTicks = 0;
+float prevTick = 0;
+*/
 
 // Initialization, create an OpenGL context
 void onInitialization() {
 
 	glViewport(0, 0, windowWidth, windowHeight);
 	glLineWidth(2);
-	glPointSize(5);
+	glPointSize(5); //Forrás: https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPointSize.xml
 
 	// create program for the GPU
 	gpuProgram.Create(vertexSource, fragmentSource, "outColor");
@@ -360,15 +403,40 @@ void onDisplay() {
 	long time = glutGet(GLUT_ELAPSED_TIME); // elapsed time since the start of the program
 	float sec = time / 1000.0f;
 
+	//fps
+	/*
+	//fps limit
+	unusedTicks = sec - prevTick;
+	if (unusedTicks > 1.0f/144.0f) {
+		//printf("unusedTicks: %f", unusedTicks);
+
+		//fps counter
+		if ((int)floor(sec) > prevsec) {
+			prevsec = (int)floor(sec);
+			printf("%d fps\n", fps);
+			//fps = 0;
+		}
+		fps++;
+		
+
+		...
+
+
+		unusedTicks = 0;
+		prevTick = sec;
+	}
+	*/
+
 	glClearColor(0.2, 0.2, 0.2, 1);     // background color
 	glClear(GL_COLOR_BUFFER_BIT); // clear frame buffer
 
 	cr.draw();
-	if (cr.points.size() > 2){
+	if (cr.points.size() > 2) {
 		t1.draw(cr, sec);
 	}
-	
+
 	glutSwapBuffers(); // exchange buffers for double buffering
+
 }
 
 // Key of ASCII code pressed
