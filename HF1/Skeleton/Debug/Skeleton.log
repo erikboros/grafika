@@ -1,10 +1,10 @@
 ﻿  Skeleton.cpp
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(115): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(154): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(231): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(254): warning C4244: '=': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(262): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(329): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(380): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(126): warning C4715: 'CatmullRom::r': not all control paths return a value
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(122): warning C4018: '<': signed/unsigned mismatch
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(161): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(241): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(267): warning C4244: '=': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(275): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(363): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(409): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(133): warning C4715: 'CatmullRom::r': not all control paths return a value
   Skeleton.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\HF1\bin\Skeleton.exe

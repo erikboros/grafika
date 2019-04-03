@@ -1,6 +1,4 @@
 //=============================================================================================
-// Mintaprogram: Zöld háromszög. Ervenyes 2018. osztol.
-//
 // A beadott program csak ebben a fajlban lehet, a fajl 1 byte-os ASCII karaktereket tartalmazhat, BOM kihuzando.
 // Tilos:
 // - mast "beincludolni", illetve mas konyvtarat hasznalni
@@ -18,8 +16,8 @@
 //
 // NYILATKOZAT
 // ---------------------------------------------------------------------------------------------
-// Nev    : 
-// Neptun : 
+// Nev    : Boros Erik
+// Neptun : JREBRU
 // ---------------------------------------------------------------------------------------------
 // ezennel kijelentem, hogy a feladatot magam keszitettem, es ha barmilyen segitseget igenybe vettem vagy
 // mas szellemi termeket felhasznaltam, akkor a forrast es az atvett reszt kommentekben egyertelmuen jeloltem.
@@ -61,12 +59,20 @@ const char * const fragmentSource = R"(
 )";
 
 GPUProgram gpuProgram; // vertex and fragment shaders
-unsigned int vao[2];	   // virtual world on the GPU
 
+/**
+* komparátor, x szerint növekvõ
+* true, ha az elsõ paraméter x koordinátája nagyobb
+* return: boolean
+*/
 bool compareVec2x(vec2 a, vec2 b) {
 	return (a.x < b.x);
 }
 
+/**
+* Catmull-Rom spline pontjainak(rt) számolása contorllpontok(points) közé
+* Haszn: deklarálás, init() (onInit, gpuProgram.create után, draw())
+*/
 class CatmullRom {
 
 public:
@@ -77,6 +83,7 @@ public:
 private:
 	unsigned int vbo; // vertex buffer object
 	boolean updated = false;
+	unsigned int vao[2];	   // virtual world on the GPU
 
 public:
 	void init() {
@@ -187,7 +194,6 @@ public:
 			}
 			
 			
-
 			///Draw control points
 			glBindVertexArray(vao[1]);		// make it active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -209,13 +215,17 @@ public:
 	}
 };
 
-
+/**
+* "Monocikli"
+* Egy CatmullRom ts pointjait képes követni
+* a spline adott idõbeli normálvektával a kerék sugarával eltolva
+*/
 class cycle {
 private:
-	unsigned int tvao;
+	unsigned int vao[2];
 	unsigned int vbo;
 	unsigned int startTime;
-	//float v = 0.2f;
+	float v = 4.0f;
 
 	std::vector<vec2> cps;
 	float wheelr = 0.05f;
@@ -232,25 +242,28 @@ private:
 	}
 
 public:
-	cycle() {
+	cycle() { //add points
 		for (float t = 0.05f; t < M_PI; t+=0.05f){
 			cps.push_back(circle(t, wheelr));
 		}
+
+		rim.push_back(vec2(0,wheelr));
+		rim.push_back(vec2(0,-wheelr));
+		rim.push_back(vec2(wheelr, 0));
+		rim.push_back(vec2(-wheelr, 0));
 	}
 
 	void init() {
-		glGenVertexArrays(1, &tvao);
+		glGenVertexArrays(2, &vao[0]);
 		glGenBuffers(1, &vbo);
 	}
 
 	void draw(CatmullRom cr, float sec) {
-		if (cps.empty())
-		{
+		if (cps.empty()){
 			printf("cps empty\n");
 			return;
 		}
-		if (first)
-		{
+		if (first && cr.points.size()>2){
 			startTime = sec;
 			first = false;
 		}
@@ -262,16 +275,14 @@ public:
 		int h = sec / maxt;
 		if (h % 2 == 0) { //elõre megyünk
 			sec = (float)sec - (float)(h*maxt);
-		}
-		else { //hátra
+		} else { //hátra
 			sec = maxt - (sec - h * maxt);
 		}
 
-		//vec2 n = cr.n(sec);
 		pos = cr.r(sec) + cr.n(sec)*wheelr;
-		//printf("%f n: (%f,%f)\n", sec, n.x, n.y);
 
-		glBindVertexArray(tvao);
+		///draw wheel
+		glBindVertexArray(vao[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			cps.size() * sizeof(vec2),	// # bytes
@@ -296,13 +307,38 @@ public:
 		glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 																	//glBindVertexArray(vao);		// Draw call
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, cps.size() /*# Elements*/);
+
+
+		///draw rim
+		glBindVertexArray(vao[1]);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
+			rim.size() * sizeof(vec2),	// # bytes
+			&rim[0],						// address
+			GL_DYNAMIC_DRAW);			// we do not change later
+
+		glEnableVertexAttribArray(0);	// AttribArray 0
+		glVertexAttribPointer(0,		// vbo -> AttribArray 0
+			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
+			0, NULL);					// stride, offset: tightly packed
+		location = glGetUniformLocation(gpuProgram.getId(), "color");
+		glUniform3f(location, 1.0f, 0.0f, 1.0f); // 3 floats
+
+		float MVPtransfrim[4][4] = {	cos(sec*v), -sin(sec*v), 0, 0,		// új x
+										sin(sec*v), cos(sec*v), 0, 0,		// új y
+										0, 0, 1, 0,		// új Z
+										pos.x, pos.y, 0, 1 };	//eltolás
+
+		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
+		glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransfrim[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		glDrawArrays(GL_LINES, 0 /*startIdx*/, rim.size() /*# Elements*/);
 	}
 };
 
 
 CatmullRom cr;
+CatmullRom bg; //TODO:
 int n=0;
-
 cycle t1;
 
 // Initialization, create an OpenGL context
@@ -317,7 +353,6 @@ void onInitialization() {
 
 	cr.init();
 	t1.init();
-
 }
 
 // Window has become invalid: Redraw
@@ -325,27 +360,21 @@ void onDisplay() {
 	long time = glutGet(GLUT_ELAPSED_TIME); // elapsed time since the start of the program
 	float sec = time / 1000.0f;
 
-	
 	glClearColor(0.2, 0.2, 0.2, 1);     // background color
 	glClear(GL_COLOR_BUFFER_BIT); // clear frame buffer
 
-	//printf("draw call\n");
 	cr.draw();
-	//printf("rt size: %d\n", cr.rt.size());
-	if (cr.points.size() > 2)
-	{
-		//printf("thing draw call\n");
+	if (cr.points.size() > 2){
 		t1.draw(cr, sec);
 	}
 	
-
 	glutSwapBuffers(); // exchange buffers for double buffering
 }
 
 // Key of ASCII code pressed
 void onKeyboard(unsigned char key, int pX, int pY) {
 	if (key == 'd') {
-		glutPostRedisplay();         // if d, invalidate display, i.e. redraw
+		//glutPostRedisplay();         // if d, invalidate display, i.e. redraw
 	}
 }
 
