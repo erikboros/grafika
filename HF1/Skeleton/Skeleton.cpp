@@ -268,7 +268,7 @@ public:
 		}
 
 		//vec2 n = cr.n(sec);
-		pos = cr.r(sec) + cr.n(sec)*r;
+		pos = cr.r(sec) + cr.n(sec)*wheelr;
 		//printf("%f n: (%f,%f)\n", sec, n.x, n.y);
 
 		glBindVertexArray(tvao);

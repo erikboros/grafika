@@ -4,6 +4,7 @@ c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(154): warning 
 c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(231): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(254): warning C4244: '=': conversion from 'float' to 'unsigned int', possible loss of data
 c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(262): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(271): error C2065: 'r': undeclared identifier
 c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(329): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
 c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(380): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(126): warning C4715: 'CatmullRom::r': not all control paths return a value
+  Skeleton.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\HF1\bin\Skeleton.exe
