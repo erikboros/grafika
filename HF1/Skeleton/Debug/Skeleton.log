@@ -1,10 +1,8 @@
 ﻿  Skeleton.cpp
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(115): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(157): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(276): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(302): warning C4244: '=': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(310): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(430): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(477): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(168): warning C4715: 'CatmullRom::r': not all control paths return a value
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(108): warning C4018: '<': signed/unsigned mismatch
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(150): warning C4018: '<': signed/unsigned mismatch
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(287): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(308): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(540): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(161): warning C4715: 'CatmullRom::r': not all control paths return a value
   Skeleton.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\HF1\bin\Skeleton.exe
