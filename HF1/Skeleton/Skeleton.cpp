@@ -60,6 +60,27 @@ const char * const fragmentSource = R"(
 
 GPUProgram gpuProgram; // vertex and fragment shaders
 
+class Camera2D {
+	vec2 wCenter; // center in world coordinates
+	vec2 wSize;   // width and height in world coordinates
+public:
+	Camera2D() : wCenter(0, 0), wSize(2, 2) { }
+
+	mat4 V() { return TranslateMatrix(-wCenter); }
+	mat4 P() { return ScaleMatrix(vec2(2 / wSize.x, 2 / wSize.y)); }
+
+	mat4 Vinv() { return TranslateMatrix(wCenter); }
+	mat4 Pinv() { return ScaleMatrix(vec2(wSize.x / 2, wSize.y / 2)); }
+
+	void Zoom(float s) { wSize = wSize * s; }
+	void Pan(vec2 t) { wCenter = wCenter + t; }
+	void Target(vec2 t) { wCenter = t; }
+};
+
+Camera2D camera;
+
+boolean follow = false;
+
 /**
 * komparátor, x szerint növekvõ
 * true, ha az elsõ paraméter x koordinátája nagyobb
@@ -84,6 +105,7 @@ public:
 	std::vector<float> ts;		//knots
 	std::vector<vec2> rt;
 	vec3 lineColor = vec3(0.3f, 0.3f, 0.3f);
+	boolean stationary = false;
 
 private:
 	unsigned int vbo; // vertex buffer object
@@ -193,6 +215,26 @@ public:
 		return vec2(0,0);
 	}
 
+	mat4 M(vec2 position, float rotate) {
+
+		mat4 P = {	1,0,0,0,
+					0,1,0,0,
+					0,0,1,0,
+					position.x,position.y,0,1 };
+
+		mat4 R = {	cos(rotate),-sin(rotate),0,0,
+					sin(rotate),cos(rotate),0,0,
+					0,0,1,0,
+					0,0,0,1 };
+
+		if (stationary){
+			return R * P;
+		}
+		else {
+			return R * P * camera.V() * camera.P();
+		}
+	}
+
 	void draw() {
 		glLineWidth(2);
 		if (points.size() > 0) {
@@ -237,7 +279,7 @@ public:
 				glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
 
 				location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-				glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+				glUniformMatrix4fv(location, 1, GL_TRUE, &M(vec2(0,0),0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 																			//glBindVertexArray(vao);		// Draw call
 				glDrawArrays(GL_LINE_STRIP, 0 /*startIdx*/, rt.size() /*# Elements*/);
 
@@ -258,7 +300,7 @@ public:
 				location = glGetUniformLocation(gpuProgram.getId(), "color");
 				glUniform3f(location, 0.0f, 0.0f, 1.0f); // 3 floats
 				location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-				glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+				glUniformMatrix4fv(location, 1, GL_TRUE, &M(vec2(0, 0), 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 																			//glBindVertexArray(vao);		// Draw call
 				glDrawArrays(GL_POINTS, 0 /*startIdx*/, points.size() /*# Elements*/);
 			}
@@ -275,13 +317,14 @@ class cycle {
 private:
 	unsigned int vao[4];
 	unsigned int vbo;
-	vec3 lineColor = vec3(0, 0, 0);
 	boolean start = true;
 
 	boolean forward = true;
 	float prevpos = 0.0;
 	float prevtime = 0.0;
 	float v = 10.0f;
+
+	vec3 lineColor = vec3(0, 0, 0);
 
 	std::vector<vec2> cps;
 	float wheelr = 0.04f;
@@ -292,13 +335,12 @@ private:
 	std::vector<vec2> head;
 	float headr = 0.025f;
 
-	boolean first = true;
-
 	vec2 circle(float t, float r) {
 		return vec2( r*cos(2*M_PI*t), r*sin(2 * M_PI*t));
 	}
 
 public:
+	vec2 pos = vec2(0, 0);
 	cycle() { //add points
 
 		for (float t = 0.05f; t < M_PI; t+=0.05f){
@@ -324,8 +366,22 @@ public:
 		glGenBuffers(1, &vbo);
 	}
 
+	mat4 M(vec2 position, float rotate) {
+		mat4 P = {	1,0,0,0,
+					0,1,0,0,
+					0,0,1,0,
+					position.x,position.y,0,1 };
+
+		mat4 R = {	cos(rotate),-sin(rotate),0,0,
+					sin(rotate),cos(rotate),0,0,
+					0,0,1,0,
+					0,0,0,1 };
+		
+		
+		return  R * P * camera.V() * camera.P();
+	}
+
 	void draw(CatmullRom cr, float sec) {
-		glLineWidth(1);
 		if (cps.empty()){
 			printf("cps empty\n");
 			return;
@@ -335,15 +391,15 @@ public:
 			start = false;
 		}
 
-		vec2 pos = vec2(0,0);
+		
 		vec2 vv = vec2(0, 0);
-		float maxt = cr.getMaxDrawTs(); //printf("cycl:draw:maxt: %f\n", maxt);
+		float maxt = cr.getMaxDrawTs();
 
 		float dt = sec - prevtime;
 		prevtime = sec;
 		
-		if (v < 6) v = 6;
-		if (v > 30) v = 30;
+		if (v < 6) v = 6;	//min speed
+		if (v > 40) v = 40;	//max speed
 
 		float ds = dt * v;
 
@@ -354,18 +410,12 @@ public:
 			forward = true;
 		}
 
-
 		if (forward){
-			//printf("prevpos: %f  ds: %f  ", prevpos, ds);
-			//printf("  cr.n:(%f,%f)\n",  (cr.n(prevpos + ds)*wheelr).x, (cr.n(prevpos + ds)*wheelr).y);
 			pos = cr.r(prevpos + ds) + (cr.n(prevpos + ds)*wheelr);
 			prevpos = prevpos + ds;
 			vv = cr.v(prevpos + ds);
 			if (vv.x != 0) {
 				v -= sin(atan(vv.y / vv.x))*0.2f;
-				v += 0.01f; //saját erõ
-				//printf("forward a: %f\n", -sin(atan(vv.y / vv.x))*0.01f);
-				//printf("forward v: %f\n", v);
 			}
 		}
 		else {
@@ -374,13 +424,19 @@ public:
 			vv = cr.v(prevpos);
 			if (vv.x != 0) {
 				v += sin(atan(vv.y / vv.x))*0.2f;
-				v += 0.01f;
-				//printf("backward a: %f\n", sin(atan(vv.y / vv.x))*0.01f);
-				//printf("backward v: %f\n", v);
 			}
 		}
-		
+		v += 0.05f;	//saját erõ
 
+		if (follow) {
+			camera.Target(pos);
+		}
+		else {
+			camera.Target(vec2(0, 0));
+		}
+		
+		
+		glLineWidth(1);
 		///draw wheel
 		glBindVertexArray(vao[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -393,19 +449,12 @@ public:
 		glVertexAttribPointer(0,		// vbo -> AttribArray 0
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 			0, NULL);					// stride, offset: tightly packed
-
-										// Set color
-		int location = glGetUniformLocation(gpuProgram.getId(), "color");
+										
+		int location = glGetUniformLocation(gpuProgram.getId(), "color");// Set color
 		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
 
-		float MVPtransf[4][4] = { 1, 0, 0, 0,		// új x
-			0, 1, 0, 0,		// új y
-			0, 0, 1, 0,		// új Z
-			pos.x, pos.y, 0, 1 };	//eltolás
-
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
-		//glBindVertexArray(vao);		// Draw call
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, cps.size() /*# Elements*/);
 
 
@@ -424,14 +473,9 @@ public:
 		location = glGetUniformLocation(gpuProgram.getId(), "color");
 		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
 
-		float vmulti = v * 1; //szögesebesség
-		float MVPtransfrim[4][4] = {	cos(prevpos + ds), -sin(prevpos + ds), 0, 0,		// új x
-										sin(prevpos + ds), cos(prevpos + ds), 0, 0,		// új y
-										0, 0, 1, 0,		// új Z
-										pos.x, pos.y, 0, 1 };	//eltolás
-
+		//float vmulti = v * 1; //szögesebesség?
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransfrim[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, prevpos + ds).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINES, 0 /*startIdx*/, rim.size() /*# Elements*/);
 
 
@@ -448,22 +492,15 @@ public:
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 			0, NULL);					// stride, offset: tightly packed
 
-										// Set color
 		location= glGetUniformLocation(gpuProgram.getId(), "color");
 		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
 
-		/*
-		float MVPtransfbody[4][4] = { 1, 0, 0, 0,		// új x
-			0, 1, 0, 0,		// új y
-			0, 0, 1, 0,		// új Z
-			pos.x, pos.y, 0, 1 };	//eltolás
-		*/
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 																	//glBindVertexArray(vao);		// Draw call
 		glDrawArrays(GL_LINE_STRIP, 0 /*startIdx*/, body.size() /*# Elements*/);
 
-		///draw body
+		///draw head
 		glBindVertexArray(vao[3]);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
@@ -476,28 +513,21 @@ public:
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 			0, NULL);					// stride, offset: tightly packed
 
-										// Set color
 		location = glGetUniformLocation(gpuProgram.getId(), "color");
 		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
 
-												 /*
-												 float MVPtransfbody[4][4] = { 1, 0, 0, 0,		// új x
-												 0, 1, 0, 0,		// új y
-												 0, 0, 1, 0,		// új Z
-												 pos.x, pos.y, 0, 1 };	//eltolás
-												 */
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &MVPtransf[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 																	//glBindVertexArray(vao);		// Draw call
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, head.size() /*# Elements*/);
 	}
 };
 
-
 CatmullRom cr;
 CatmullRom bg; //************************************************************TODO:
 cycle t1;
 boolean go = true;
+
 
 /*
 int fps = 0;
@@ -517,7 +547,7 @@ void onInitialization() {
 	gpuProgram.Create(vertexSource, fragmentSource, "outColor");
 
 	bg.init();
-
+	bg.stationary = true;
 
 	for (float i = -2; i < 2.1; i+=0.5f){
 		bg.addPoint(vec2(i, (float)(rand()%10)/10));
@@ -527,7 +557,6 @@ void onInitialization() {
 	cr.setDrawPoints(true);
 
 	t1.init();
-
 }
 
 // Window has become invalid: Redraw
@@ -562,7 +591,6 @@ void onDisplay() {
 	glClearColor(0.4, 0.6, 1.0, 1);     // background color
 	glClear(GL_COLOR_BUFFER_BIT); // clear frame buffer
 
-
 	bg.draw();
 	cr.draw();
 	if (cr.points.size() > 2 && go) {
@@ -575,8 +603,8 @@ void onDisplay() {
 
 // Key of ASCII code pressed
 void onKeyboard(unsigned char key, int pX, int pY) {
-	if (key == 'd') {
-		//glutPostRedisplay();         // if d, invalidate display, i.e. redraw
+	if (key == ' ') {
+		follow = !follow;
 	}
 }
 
