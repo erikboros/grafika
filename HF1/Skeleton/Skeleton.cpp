@@ -310,22 +310,21 @@ public:
 */
 class cycle {
 private:
-	unsigned int vao[4];
+	unsigned int vao;
 	unsigned int vbo;
 	boolean start = true;
 
 	boolean forward = true;
-	float prevpos = 0.0;
-	float prevtime = 0.0;
+	float prevpos = 0;
+	float prevtime = 0;
+	float prevphi = 0;
 	float v = 0.1f;
 
 	vec3 lineColor = vec3(0, 0, 0);
 
 	std::vector<vec2> cps;
 	float wheelr = 0.04f;
-
 	std::vector<vec2> rim;
-
 	std::vector<vec2> body;
 	std::vector<vec2> head;
 	float headr = 0.025f;
@@ -357,7 +356,7 @@ public:
 	}
 
 	void init() {
-		glGenVertexArrays(4, &vao[0]);
+		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 	}
 
@@ -424,6 +423,18 @@ public:
 		}
 		//v += 0.05f;	//saját erõ
 
+		float dphi = v * dt / wheelr;
+		float phi = 0;
+		if (forward)
+		{
+			phi = prevphi + dphi;
+			prevphi += dphi;
+		}
+		else {
+			phi = prevphi - dphi;
+			prevphi -= dphi;
+		}
+
 		if (follow) {
 			camera.Target(pos);
 		}
@@ -433,7 +444,7 @@ public:
 		
 		glLineWidth(1);
 		///draw wheel
-		glBindVertexArray(vao[0]);
+		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			cps.size() * sizeof(vec2),	// # bytes
@@ -442,40 +453,27 @@ public:
 		glEnableVertexAttribArray(0);	// AttribArray 0
 		glVertexAttribPointer(0,		// vbo -> AttribArray 0
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
-			0, NULL);					// stride, offset: tightly packed
-										
+			0, NULL);					// stride, offset: tightly packed			
 		int location = glGetUniformLocation(gpuProgram.getId(), "color");	// Set color
 		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);		// 3 floats
-
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");			// Get the GPU location of uniform variable MVP
 		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);		// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, cps.size() /*# Elements*/);
-
 
 		///draw rim
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			rim.size() * sizeof(vec2),	// # bytes
 			&rim[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
-
-		//location = glGetUniformLocation(gpuProgram.getId(), "color");
-		//glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);	// 3 floats
-		float dphi = v * dt / wheelr; //szögesebesség?
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");		// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, (dphi)).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, phi).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINES, 0 /*startIdx*/, rim.size() /*# Elements*/);
-
 
 		///draw body
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			body.size() * sizeof(vec2),	// # bytes
 			&body[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
-		glVertexAttribPointer(0,		// vbo -> AttribArray 0
-			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
-			0, NULL);					// stride, offset: tightly packed
-		//location= glGetUniformLocation(gpuProgram.getId(), "color");
-		//glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);	// 3 floats
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");		// Get the GPU location of uniform variable MVP
 		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINE_STRIP, 0 /*startIdx*/, body.size() /*# Elements*/);
@@ -485,11 +483,6 @@ public:
 			head.size() * sizeof(vec2),	// # bytes
 			&head[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
-		glVertexAttribPointer(0,		// vbo -> AttribArray 0
-			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
-			0, NULL);					// stride, offset: tightly packed
-		//location = glGetUniformLocation(gpuProgram.getId(), "color");
-		//glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);	// 3 floats
 		location = glGetUniformLocation(gpuProgram.getId(), "MVP");		// Get the GPU location of uniform variable MVP
 		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, head.size() /*# Elements*/);
@@ -501,12 +494,6 @@ CatmullRom cr;
 cycle t1;
 boolean go = true;
 
-/*
-int fps = 0;
-int prevsec = 0;
-float unusedTicks = 0;
-float prevTick = 0;
-*/
 
 // Initialization, create an OpenGL context
 void onInitialization() {
@@ -531,30 +518,6 @@ void onInitialization() {
 void onDisplay() {
 	long time = glutGet(GLUT_ELAPSED_TIME); // elapsed time since the start of the program
 	float sec = time / 1000.0f;
-
-	//fps
-	/*
-	//fps limit
-	unusedTicks = sec - prevTick;
-	if (unusedTicks > 1.0f/144.0f) {
-		//printf("unusedTicks: %f", unusedTicks);
-
-		//fps counter
-		if ((int)floor(sec) > prevsec) {
-			prevsec = (int)floor(sec);
-			printf("%d fps\n", fps);
-			//fps = 0;
-		}
-		fps++;
-		
-
-		...
-
-
-		unusedTicks = 0;
-		prevTick = sec;
-	}
-	*/
 
 	glClearColor(0.4, 0.6, 1.0, 1);     // background color
 	glClear(GL_COLOR_BUFFER_BIT); // clear frame buffer
