@@ -1,8 +1,9 @@
 ﻿  Skeleton.cpp
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(131): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(179): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(339): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(360): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(595): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
-c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(190): warning C4715: 'CatmullRom::r': not all control paths return a value
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(136): warning C4018: '<': signed/unsigned mismatch
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(188): warning C4018: '<': signed/unsigned mismatch
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(334): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(355): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(397): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(559): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+c:\users\boros\documents\github\grafika\hf1\skeleton\skeleton.cpp(202): warning C4715: 'CatmullRom::r': not all control paths return a value
   Skeleton.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\HF1\bin\Skeleton.exe

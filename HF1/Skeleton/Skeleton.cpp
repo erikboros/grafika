@@ -28,6 +28,9 @@
 // a sajat kontribucioba, igy a feladat elfogadasarol a tobbi resz mennyisege es minosege alapjan szuletik dontes.
 // Tudomasul veszem, hogy a forrasmegjeloles kotelmenek megsertese eseten a hazifeladatra adhato pontokat
 // negativ elojellel szamoljak el es ezzel parhuzamosan eljaras is indul velem szemben.
+//
+//Források: https://www.khronos.org/registry/OpenGL-Refpages/
+//	http://cg.iit.bme.hu/portal/sites/default/files/oktatott%20t%C3%A1rgyak/sz%C3%A1m%C3%ADt%C3%B3g%C3%A9pes%20grafika/grafikus%20alap%20hw/sw/smoothtriangle.cpp?fbclid=IwAR2f3RM_IhACJD-fYc5pJpaOXuxcd65n_Ks4gmI4BW-Z8A_Bfg4OsNDZU8M
 //=============================================================================================
 #include "framework.h"
 #include <algorithm>    // std::sort
@@ -60,6 +63,7 @@ const char * const fragmentSource = R"(
 
 GPUProgram gpuProgram; // vertex and fragment shaders
 
+//Forrás: http://cg.iit.bme.hu/portal/sites/default/files/oktatott%20t%C3%A1rgyak/sz%C3%A1m%C3%ADt%C3%B3g%C3%A9pes%20grafika/grafikus%20alap%20hw/sw/smoothtriangle.cpp?fbclid=IwAR2f3RM_IhACJD-fYc5pJpaOXuxcd65n_Ks4gmI4BW-Z8A_Bfg4OsNDZU8M
 class Camera2D {
 	vec2 wCenter; // center in world coordinates
 	vec2 wSize;   // width and height in world coordinates
@@ -122,6 +126,7 @@ public:
 	}
 
 	void addPoint(vec2 cpt) {
+		printf("addpoint\n");
 		points.push_back(cpt);
 		
 		std::sort (points.begin(), points.end(), compareVec2x); //*********************************TODO: WAT
@@ -130,7 +135,7 @@ public:
 		ts.push_back(0.0f);
 		for (int i = 1; i < points.size(); i++) {
 			//ts.push_back(ts[i - 1] + (points[i].x - points[i - 1].x));
-			ts.push_back(ts[i - 1] + (abs(points[i] - points[i - 1])) *100); //*10?
+			ts.push_back(ts[i - 1] + (abs(points[i] - points[i - 1]))); //*10?
 		}
 		updated = true;
 	}
@@ -142,12 +147,18 @@ public:
 	}
 
 	float getMaxDrawTs() {
-		//using monoton building
-		//return (int)floor(ts[ts.size()-1]);
-
-		if (ts.size() > 2) {
+		if (ts.size() >= 4) {
 			//printf("cr:getmaxdrawt: %f", ts[ts.size() - 2]);
 			return ts[ts.size() - 2];
+		}
+		else {
+			return 0.0f;
+		}
+	}
+
+	float getMinDrawTs() {
+		if (ts.size() >= 2) {
+			return ts[1];
 		}
 		else {
 			return 0.0f;
@@ -167,31 +178,32 @@ public:
 		vec2 a2 = ((p1 - p0) * 3) * (1.0f / ((t1 - t0)*(t1 - t0))) - (v1 + v0 * 2) * (1.0f / (t1 - t0));
 		vec2 a3 = ((p0 - p1) * 2) * (1.0f / ((t1 - t0)*(t1 - t0)*(t1 - t0))) + (v1 + v0) * (1.0f / ((t1 - t0)*(t1 - t0)));
 		float tt = (t - t0);
-		return a3 * (tt*tt*tt) + a2 * (tt*tt) + v0 * tt + p0;
+		vec2 ret = a3 * (tt*tt*tt) + a2 * (tt*tt) + v0 * tt + p0;
+		//printf("t:%f (%f,%f)\n", t, ret.x, ret.y);
+		return ret;
 	}
 
-	vec2 r(float t) {
-		if (points.size() >= 2) {
-			float error = 0.01f;
-			if (t>getMaxTs()-error && t < getMaxTs()+error){
-				return points[points.size() - 2];
-			}
-			for (int i = 0; i < points.size() - 2; i++) {
-				if (ts[i] <= t && t <= ts[i + 1]) {
-					vec2 v0 = ((points[i + 1] - points[i]) * (1.0f / (ts[i + 1] - ts[i])) + (points[i] - points[i + 1]) * (1.0f / (ts[i] - ts[i + 1])))*0.5f; // *(1-tau)
-					vec2 v1 = ((points[i + 2] - points[i + 1]) * (1.0f / (ts[i + 2] - ts[i + 1])) + (points[i + 1] - points[i + 2]) * (1.0f / (ts[i + 1] - ts[i + 2])))*0.5f;
-					return hermite(points[i], v0, ts[i], points[i + 1], v1, ts[i + 1], t);
+	vec2 r(float time) {
+		if (points.size()>=4) {
+			for (int i = 1; i < points.size() - 2; i++) {
+				if (ts[i] <= time && time <= ts[i + 1]) {
+					float t = -0.5;
+					float b = 1;
+					float c = 0.5;
+					vec2 v0 = (points[i] - points[i - 1])*((1 - t)*(1 + b)*(1 + c))*0.5f + (points[i+1] - points[i]) * ((1-t)*(1-b)*(1-c))*0.5f;
+					vec2 v1 = (points[i + 1] - points[i])*((1 - t)*(1 + b)*(1 - c))*0.5f + (points[i+2]-points[i+1]) * ((1-t)*(1-b)*(1+c))*0.5f;
+					return hermite(points[i], v0, ts[i], points[i + 1], v1, ts[i + 1], time);
 				}
 			}
 		}
 		else {
-			return vec2(0,0);
+			return vec2(0, 0);
 		}
 	}
 
-	vec2 v(float t) {//?
-		if (points.size() > 2) {
-			if (ts[0] < t && t < ts[ts.size() - 2] - 0.001f) {
+	vec2 v(float t) {
+		if (points.size() >= 4) {
+			if (ts[1] < t && t < ts[ts.size() - 2] - 0.001f) {
 				vec2 v = r(t + 0.001f) - r(t);
 				float absv = sqrt(v.x*v.x + v.y*v.y);
 				return vec2(v.x / absv, v.y / absv);
@@ -201,8 +213,8 @@ public:
 	}
 
 	vec2 n(float t) {
-		if (points.size() > 2) {
-			if (ts[0] < t && t < ts[ts.size() - 2] - 0.001f) {
+		if (points.size() >= 4) {
+			if (ts[1] < t && t < ts[ts.size() - 2] - 0.001f) {
 				vec2 v = r(t + 0.001f) - r(t);
 				float absv = sqrt(v.x*v.x + v.y*v.y);
 				vec2 e = vec2(v.x / absv, v.y / absv);
@@ -237,58 +249,42 @@ public:
 
 	void draw() {
 		glLineWidth(2);
+		glBindVertexArray(vao[0]);		// make it active
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		int location;
+
 		if (points.size() > 0) {
 
-			float MVPtransf[4][4] = { 1, 0, 0, 0,    // MVP matrix, 
-				0, 1, 0, 0,    // row-major!
-				0, 0, 1, 0,
-				0, 0, 0, 1 };
-			int location;
-
-			if (points.size() > 2){
-
+			if (points.size() >= 4){
 				if (updated) {
 					rt.clear();
-
-					float max = getMaxTs();
-
-					for (float t = 0.0f; t < max; t += 0.01f) {
-						vec2 tmp = r(t);
+					float max = getMaxDrawTs();
+					for (float t = ts[1]; t < max; t += 0.05f) {
+						vec2 tmp = vec2(0, 0);
+						tmp = r(t);
 						rt.push_back(tmp);
-						//printf("t:%f (%f,%f)\n", t, tmp.x, tmp.y);
 					}
 					rt.push_back(points[points.size()-2]);
 					updated = false;
 				}
 
 				///Draw spline
-				glBindVertexArray(vao[0]);
-				glBindBuffer(GL_ARRAY_BUFFER, vbo);
 				glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 					rt.size() * sizeof(vec2),	// # bytes
 					&rt[0],						// address
 					GL_DYNAMIC_DRAW);			// we do not change later
-
 				glEnableVertexAttribArray(0);	// AttribArray 0
 				glVertexAttribPointer(0,		// vbo -> AttribArray 0
 					2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 					0, NULL);					// stride, offset: tightly packed
-
-												// Set color
 				location = glGetUniformLocation(gpuProgram.getId(), "color");
 				glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
-
 				location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
 				glUniformMatrix4fv(location, 1, GL_TRUE, &M(vec2(0,0),0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
-																			//glBindVertexArray(vao);		// Draw call
 				glDrawArrays(GL_LINE_STRIP, 0 /*startIdx*/, rt.size() /*# Elements*/);
-
 			}
 			
-			if (drawPoints) {
-				///Draw control points
-				glBindVertexArray(vao[1]);		// make it active
-				glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			if (drawPoints) {	///Draw control points
 				glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 					points.size() * sizeof(vec2),	// # bytes
 					&points[0],						// address
@@ -301,7 +297,6 @@ public:
 				glUniform3f(location, 0.0f, 0.0f, 1.0f); // 3 floats
 				location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
 				glUniformMatrix4fv(location, 1, GL_TRUE, &M(vec2(0, 0), 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
-																			//glBindVertexArray(vao);		// Draw call
 				glDrawArrays(GL_POINTS, 0 /*startIdx*/, points.size() /*# Elements*/);
 			}
 		}
@@ -322,7 +317,7 @@ private:
 	boolean forward = true;
 	float prevpos = 0.0;
 	float prevtime = 0.0;
-	float v = 10.0f;
+	float v = 0.1f;
 
 	vec3 lineColor = vec3(0, 0, 0);
 
@@ -388,34 +383,35 @@ public:
 		}
 		if (start) {
 			prevtime = sec;
+			prevpos = cr.getMinDrawTs();
 			start = false;
 		}
 
-		
 		vec2 vv = vec2(0, 0);
 		float maxt = cr.getMaxDrawTs();
+		float mint = cr.getMinDrawTs();
 
 		float dt = sec - prevtime;
 		prevtime = sec;
 		
-		if (v < 6) v = 6;	//min speed
-		if (v > 40) v = 40;	//max speed
+		if (v < 0.15) v = 0.15;	//min speed
+		if (v > 1.5) v = 1.5;	//max speed
 
 		float ds = dt * v;
 
 		if (forward && (prevpos + ds) > maxt) {
 			forward = false;
 		}
-		if (!forward && (prevpos - ds) < 0) {
+		if (!forward && (prevpos - ds) < mint) {
 			forward = true;
 		}
 
 		if (forward){
-			pos = cr.r(prevpos + ds) + (cr.n(prevpos + ds)*wheelr);
+			pos = cr.r(prevpos + ds) +(cr.n(prevpos + ds)*wheelr);
 			prevpos = prevpos + ds;
 			vv = cr.v(prevpos + ds);
 			if (vv.x != 0) {
-				v -= sin(atan(vv.y / vv.x))*0.2f;
+				v -= sin(atan(vv.y / vv.x))*0.002f;
 			}
 		}
 		else {
@@ -423,10 +419,10 @@ public:
 			prevpos = prevpos - ds;
 			vv = cr.v(prevpos);
 			if (vv.x != 0) {
-				v += sin(atan(vv.y / vv.x))*0.2f;
+				v += sin(atan(vv.y / vv.x))*0.002f;
 			}
 		}
-		v += 0.05f;	//saját erõ
+		//v += 0.05f;	//saját erõ
 
 		if (follow) {
 			camera.Target(pos);
@@ -435,99 +431,75 @@ public:
 			camera.Target(vec2(0, 0));
 		}
 		
-		
 		glLineWidth(1);
 		///draw wheel
 		glBindVertexArray(vao[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			cps.size() * sizeof(vec2),	// # bytes
-			&cps[0],						// address
+			&cps[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
-
 		glEnableVertexAttribArray(0);	// AttribArray 0
 		glVertexAttribPointer(0,		// vbo -> AttribArray 0
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 			0, NULL);					// stride, offset: tightly packed
 										
-		int location = glGetUniformLocation(gpuProgram.getId(), "color");// Set color
-		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
+		int location = glGetUniformLocation(gpuProgram.getId(), "color");	// Set color
+		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);		// 3 floats
 
-		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		location = glGetUniformLocation(gpuProgram.getId(), "MVP");			// Get the GPU location of uniform variable MVP
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);		// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, cps.size() /*# Elements*/);
 
 
 		///draw rim
-		glBindVertexArray(vao[1]);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			rim.size() * sizeof(vec2),	// # bytes
-			&rim[0],						// address
+			&rim[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
 
-		glEnableVertexAttribArray(0);	// AttribArray 0
-		glVertexAttribPointer(0,		// vbo -> AttribArray 0
-			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
-			0, NULL);					// stride, offset: tightly packed
-		location = glGetUniformLocation(gpuProgram.getId(), "color");
-		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
-
-		//float vmulti = v * 1; //szögesebesség?
-		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
-		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, prevpos + ds).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
+		//location = glGetUniformLocation(gpuProgram.getId(), "color");
+		//glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);	// 3 floats
+		float dphi = v * dt / wheelr; //szögesebesség?
+		location = glGetUniformLocation(gpuProgram.getId(), "MVP");		// Get the GPU location of uniform variable MVP
+		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, (dphi)).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
 		glDrawArrays(GL_LINES, 0 /*startIdx*/, rim.size() /*# Elements*/);
 
 
 		///draw body
-		glBindVertexArray(vao[2]);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			body.size() * sizeof(vec2),	// # bytes
-			&body[0],						// address
+			&body[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
-
-		glEnableVertexAttribArray(0);	// AttribArray 0
 		glVertexAttribPointer(0,		// vbo -> AttribArray 0
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 			0, NULL);					// stride, offset: tightly packed
-
-		location= glGetUniformLocation(gpuProgram.getId(), "color");
-		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
-
-		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
+		//location= glGetUniformLocation(gpuProgram.getId(), "color");
+		//glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);	// 3 floats
+		location = glGetUniformLocation(gpuProgram.getId(), "MVP");		// Get the GPU location of uniform variable MVP
 		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
-																	//glBindVertexArray(vao);		// Draw call
 		glDrawArrays(GL_LINE_STRIP, 0 /*startIdx*/, body.size() /*# Elements*/);
 
 		///draw head
-		glBindVertexArray(vao[3]);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER,	// Copy to GPU target
 			head.size() * sizeof(vec2),	// # bytes
-			&head[0],						// address
+			&head[0],					// address
 			GL_DYNAMIC_DRAW);			// we do not change later
-
-		glEnableVertexAttribArray(0);	// AttribArray 0
 		glVertexAttribPointer(0,		// vbo -> AttribArray 0
 			2, GL_FLOAT, GL_FALSE,		// two floats/attrib, not fixed-point
 			0, NULL);					// stride, offset: tightly packed
-
-		location = glGetUniformLocation(gpuProgram.getId(), "color");
-		glUniform3f(location, lineColor.x, lineColor.y, lineColor.z); // 3 floats
-
-		location = glGetUniformLocation(gpuProgram.getId(), "MVP");	// Get the GPU location of uniform variable MVP
+		//location = glGetUniformLocation(gpuProgram.getId(), "color");
+		//glUniform3f(location, lineColor.x, lineColor.y, lineColor.z);	// 3 floats
+		location = glGetUniformLocation(gpuProgram.getId(), "MVP");		// Get the GPU location of uniform variable MVP
 		glUniformMatrix4fv(location, 1, GL_TRUE, &M(pos, 0).m[0][0]);	// Load a 4x4 row-major float matrix to the specified location
-																	//glBindVertexArray(vao);		// Draw call
 		glDrawArrays(GL_LINE_LOOP, 0 /*startIdx*/, head.size() /*# Elements*/);
 	}
 };
 
 CatmullRom cr;
-CatmullRom bg; //************************************************************TODO:
+//CatmullRom bg; //************************************************************TODO:
 cycle t1;
 boolean go = true;
-
 
 /*
 int fps = 0;
@@ -538,20 +510,16 @@ float prevTick = 0;
 
 // Initialization, create an OpenGL context
 void onInitialization() {
-
 	glViewport(0, 0, windowWidth, windowHeight);
-	
 	glPointSize(5); //Forrás: https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPointSize.xml
+	gpuProgram.Create(vertexSource, fragmentSource, "outColor");	// create program for the GPU
 
-	// create program for the GPU
-	gpuProgram.Create(vertexSource, fragmentSource, "outColor");
-
+	/*
 	bg.init();
 	bg.stationary = true;
-
 	for (float i = -2; i < 2.1; i+=0.5f){
 		bg.addPoint(vec2(i, (float)(rand()%10)/10));
-	}
+	}*/
 
 	cr.init();
 	cr.setDrawPoints(true);
@@ -591,14 +559,13 @@ void onDisplay() {
 	glClearColor(0.4, 0.6, 1.0, 1);     // background color
 	glClear(GL_COLOR_BUFFER_BIT); // clear frame buffer
 
-	bg.draw();
 	cr.draw();
-	if (cr.points.size() > 2 && go) {
+	
+	if (cr.points.size() >= 4 && go) {
 		t1.draw(cr, sec);
 	}
 
 	glutSwapBuffers(); // exchange buffers for double buffering
-
 }
 
 // Key of ASCII code pressed
