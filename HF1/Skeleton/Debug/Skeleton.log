@@ -1,9 +1,13 @@
 ﻿  Skeleton.cpp
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(136): warning C4018: '<': signed/unsigned mismatch
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(188): warning C4018: '<': signed/unsigned mismatch
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(333): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(354): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(396): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(552): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
-c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(202): warning C4715: 'CatmullRom::r': not all control paths return a value
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(105): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(128): warning C4018: '<': signed/unsigned mismatch
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(137): warning C4018: '<': signed/unsigned mismatch
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(198): warning C4018: '<': signed/unsigned mismatch
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(369): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(390): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(431): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(558): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(561): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(578): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+c:\users\erik\documents\github\grafika\hf1\skeleton\skeleton.cpp(212): warning C4715: 'CatmullRom::r': not all control paths return a value
   Skeleton.vcxproj -> C:\Users\Erik\Documents\GitHub\grafika\HF1\bin\Skeleton.exe
