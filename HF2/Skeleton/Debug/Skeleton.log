@@ -1,34 +1,22 @@
 ﻿  Skeleton.cpp
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(74): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(77): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(80): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(83): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(99): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(102): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(105): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(214): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(216): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(320): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(322): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(445): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(479): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(491): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(516): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(557): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(582): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(583): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(653): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(657): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(661): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(676): warning C4018: '<': signed/unsigned mismatch
-c:\users\boros\documents\github\grafika\hf2\skeleton\skeleton.cpp(715): warning C4305: 'initializing': truncation from 'double' to 'float'
-  Skeleton.vcxproj -> C:\Users\boros\Documents\GitHub\grafika\HF2\bin\Skeleton.exe
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(40): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(42): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(79): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(81): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(84): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(85): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(100): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(164): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(171): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(172): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(175): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(176): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(272): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(273): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(276): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(287): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(303): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(324): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(328): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(420): warning C4715: 'Scene::trace': not all control paths return a value
+  Skeleton.vcxproj -> C:\Users\Erik\Documents\GitHub\grafika\HF2\bin\Skeleton.exe
