@@ -1,22 +1,23 @@
 ﻿  Skeleton.cpp
 c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(40): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(42): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(79): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(81): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(84): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(85): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(100): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(164): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(171): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(172): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(175): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(176): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(272): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(273): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(276): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(287): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(303): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(324): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(328): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(420): warning C4715: 'Scene::trace': not all control paths return a value
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(43): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(44): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(88): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(90): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(93): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(94): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(172): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(180): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(188): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(189): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(192): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(193): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(289): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(290): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(293): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(304): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(321): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(326): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(332): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\erik\documents\github\grafika\hf2\skeleton\skeleton.cpp(415): warning C4715: 'Scene::trace': not all control paths return a value
   Skeleton.vcxproj -> C:\Users\Erik\Documents\GitHub\grafika\HF2\bin\Skeleton.exe

@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Skeleton", "Skeleton\Skelet
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "raycast", "RayCast\raycast.vcxproj", "{2AD97D4A-7385-4239-82E1-3976C4188838}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pathtrace", "PathTracing\pathtrace.vcxproj", "{AB04C453-F816-4C0E-9F37-551CC7475253}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{2AD97D4A-7385-4239-82E1-3976C4188838}.Debug|Win32.Build.0 = Debug|Win32
 		{2AD97D4A-7385-4239-82E1-3976C4188838}.Release|Win32.ActiveCfg = Release|Win32
 		{2AD97D4A-7385-4239-82E1-3976C4188838}.Release|Win32.Build.0 = Release|Win32
+		{AB04C453-F816-4C0E-9F37-551CC7475253}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AB04C453-F816-4C0E-9F37-551CC7475253}.Debug|Win32.Build.0 = Debug|Win32
+		{AB04C453-F816-4C0E-9F37-551CC7475253}.Release|Win32.ActiveCfg = Release|Win32
+		{AB04C453-F816-4C0E-9F37-551CC7475253}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
