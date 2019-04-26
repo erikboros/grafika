@@ -33,15 +33,19 @@
 #include "framework.h"
 
 struct Material {
+public:
 	vec3 ka, kd, ks;
 	float  shininess;
 	bool rough;
-	vec3 F0;
-	Material(vec3 _kd, vec3 _ks, float _shininess, bool _rough) : ka(_kd * M_PI), kd(_kd), ks(_ks), rough(_rough) {
+	//vec3 F0;
+	Material(vec3 _ka, vec3 _kd, vec3 _ks, float _shininess, bool _rough) : ka(_ka), kd(_kd), ks(_ks), rough(_rough) {
 		shininess = _shininess; 
+		/*
 		vec3 one(1, 1, 1);
-		vec3 n(0.17, 0.35, 1.5);
+		vec3 n(0.17, 0.35, 1.5); //arany
 		vec3 kappa(3.1, 2.7, 1.9);
+		//vec3 n(0.14, 0.16, 0.13); //ezüst
+		//vec3 kappa(4.1, 2.3, 3.1);
 		vec3 F0(0, 0, 0);
 		F0.x = ((n.x - one.x)*(n.x - one.x) + kappa.x * kappa.x) /
 			((n.x + one.x)*(n.x + one.x) + kappa.x * kappa.x);
@@ -49,6 +53,8 @@ struct Material {
 			((n.y + one.y)*(n.y + one.y) + kappa.y * kappa.y);
 		F0.z = ((n.z - one.z)*(n.z - one.z) + kappa.z * kappa.z) /
 			((n.z + one.z)*(n.z + one.z) + kappa.z * kappa.z);
+		printf("F0: (%f,%f,%f)\n", F0.x, F0.y, F0.z);
+		*/
 	}
 };
 
@@ -168,7 +174,7 @@ struct PolyTube{
 	int n;
 	float d;
 	PolyTube() {
-		n = 3;
+		n = 5;
 		d = 0.4;
 	}
 	void setMaterial(Material* _material) {
@@ -297,11 +303,11 @@ public:
 
 struct Light {
 	vec3 direction;
-	vec3 Le, La;
+	vec3 Le;// La;
 	Light(vec3 _direction, vec3 _Le) {
 		direction = normalize(_direction);
 		Le = _Le;
-		La = vec3(0.4, 0.3, 0.3);
+		//La = vec3(0.4, 0.3, 0.3);
 	}
 };
 
@@ -315,29 +321,59 @@ class Scene {
 	std::vector<Light *> lights;
 	Camera camera;
 	vec3 La;
+
+	vec3 F0gold;
+	vec3 F0silver;
+	
 public:
+	bool gold = true;
+	void setGold(bool b) {
+		gold = b;
+	}
 	void build() {
 		vec3 eye = vec3(0, 0, 2), vup = vec3(0, 1, 0), lookat = vec3(0, 0, 0);
-		float fov = 75 * M_PI / 180;
+		float fov = 90 * M_PI / 180;
 		camera.set(eye, lookat, vup, fov);
 
-		La = vec3(1.0f, 0.5f, 0.5f);
-		vec3 lightDirection(0, 0, 1), 
-			Le(1.1, 1.2, 1.5);
+		vec3 one(1, 1, 1);
+		vec3 n(0.17, 0.35, 1.5); //arany
+		vec3 kappa(3.1, 2.7, 1.9);
+		F0gold.x = ((n.x - one.x)*(n.x - one.x) + kappa.x * kappa.x) /
+			((n.x + one.x)*(n.x + one.x) + kappa.x * kappa.x);
+		F0gold.y = ((n.y - one.y)*(n.y - one.y) + kappa.y * kappa.y) /
+			((n.y + one.y)*(n.y + one.y) + kappa.y * kappa.y);
+		F0gold.z = ((n.z - one.z)*(n.z - one.z) + kappa.z * kappa.z) /
+			((n.z + one.z)*(n.z + one.z) + kappa.z * kappa.z);
+
+		n=vec3(0.14, 0.16, 0.13); //ezüst
+		kappa=vec3(4.1, 2.3, 3.1);
+		F0silver.x = ((n.x - one.x)*(n.x - one.x) + kappa.x * kappa.x) /
+			((n.x + one.x)*(n.x + one.x) + kappa.x * kappa.x);
+		F0silver.y = ((n.y - one.y)*(n.y - one.y) + kappa.y * kappa.y) /
+			((n.y + one.y)*(n.y + one.y) + kappa.y * kappa.y);
+		F0silver.z = ((n.z - one.z)*(n.z - one.z) + kappa.z * kappa.z) /
+			((n.z + one.z)*(n.z + one.z) + kappa.z * kappa.z);
+
+		La = vec3(0.8, 0.8, 0.8);
+		vec3 lightDirection(0, 0, 1);
+		vec3 Le(0.8, 0.8, 0.8);
 		lights.push_back(new Light(lightDirection, Le));
 
-		vec3 kd(0.5f, 0.5f, 1.0f); 
-		vec3 ks(0.5, 0.5, 0.5);
-		Material * material = new Material(kd, ks, 20, true);
-		objects.push_back(new Sphere(vec3(0, 0, 0), 0.15, material));
+		vec3 ka(0.4, 0.5, 0.6);
+		vec3 kd(0.5, 0.5, 0.9); 
+		vec3 ks(0.1, 0.1, 0.9);
+		Material * material = new Material(ka, kd, ks, 40, true);
+		objects.push_back(new Sphere(vec3(0, 0, 0), 0.15, material)); //
 
-		Material * smaterial = new Material(kd, ks, 0, false);
+		Material * smaterial = new Material(ka, kd, ks, 0, false);
 		mirror.setMaterial(smaterial);
 		mirror.putSides(objects);
 
-		kd= vec3(1, 1, 1);
-		Material * white = new Material(kd, ks, 1, true);
-		objects.push_back(new Wall(vec3(-1, 1, 0), vec3(-1, -1, 0), vec3(1, 1,0), vec3(1, -1, 0), white));
+		ka= vec3(0.5, 0.5, 0.5);
+		kd= vec3(0.3, 0.3, 0.3);
+		ks= vec3(0.2, 0.2, 0.2);//0.1
+		Material * white = new Material(ka, kd, ks, 2, true);
+		objects.push_back(new Wall(vec3(-1, 1, 0), vec3(-1, -1, 0), vec3(1, 1,0), vec3(1, -1, 0), white)); //backdrop
 
 
 	}
@@ -372,12 +408,21 @@ public:
 		return false;
 	}
 
-	vec3 Fresnel(vec3 inDir, vec3 normal, vec3 F0){//vec3 F0, float cosTheta) {
+	vec3 Fresnel(vec3 inDir, vec3 normal){//vec3 F0, float cosTheta) {
 		//return F0 + (vec3(1, 1, 1) - F0) * pow(cosTheta, 5);
-		float cosa = -dot(inDir, normal);
+		//printf("fresnel: F0: (%f,%f,%f)\n", F0.x, F0.y, F0.z);
+
 		vec3 one(1, 1, 1);
-		vec3 ret = F0 + (one - F0)*pow(1 - cosa, 5);
-		//printf("fresnel: (%f,%f,%f)\n", ret.x, ret.y, ret.z); //(0.8,0.9, 0.8)
+		vec3 ret(0, 0, 0);
+		float cosa = -dot(inDir, normal);
+		if (gold) {
+			ret = F0gold + (one - F0gold) * pow(1 - cosa, 5);
+		}
+		else {
+			ret = F0silver + (one - F0silver) * pow(1 - cosa, 5);
+		}
+		
+		//printf("fresnel: (%f,%f,%f)\n", ret.x, ret.y, ret.z);
 		return ret;
 	}
 
@@ -386,7 +431,7 @@ public:
 	}
 
 	vec3 trace(Ray ray, int maxdepth=10) {	
-		vec3 weight = vec3(1, 1, 1);
+		vec3 weight(1, 1, 1);
 		vec3 outRadiance = vec3(0, 0, 0);
 		Light *light = lights[0];
 
@@ -394,21 +439,27 @@ public:
 			Hit hit = firstIntersect(ray);
 			if (hit.t < 0) return weight * La;
 			if (hit.material->rough) {
-				outRadiance = outRadiance + weight* hit.material->ka * La;
+				outRadiance = outRadiance + weight * hit.material->ka * La;
 				Ray shadowRay(hit.position + hit.normal * epsilon, light->direction);
 				float cosTheta = dot(hit.normal, light->direction);
 				if (cosTheta > 0 && !shadowIntersect(shadowRay)) {	// shadow computation
 					outRadiance = outRadiance + weight * light->Le * hit.material->kd * cosTheta;
 					vec3 halfway = normalize(-ray.dir + light->direction);
 					float cosDelta = dot(hit.normal, halfway);
-					if (cosDelta > 0) outRadiance = outRadiance + weight * light->Le * hit.material->ks * powf(cosDelta, hit.material->shininess);
+					if (cosDelta > 0) outRadiance = outRadiance + weight * light->Le * hit.material->ks * pow(cosDelta, hit.material->shininess);
 				}
 			}
 			if (!hit.material->rough) { //reflective
-				weight = Fresnel(ray.dir, hit.normal, hit.material->F0) * weight;//Fresnel(hit.material->F0, dot(-ray.dir, hit.normal)) * weight;
+				//printf("F0: (%f,%f,%f)\n", hit.material->F0.x, hit.material->F0.y, hit.material->F0.z);
+				weight = weight * Fresnel(ray.dir, hit.normal);//Fresnel(hit.material->F0, dot(-ray.dir, hit.normal)) * weight;
+				//printf("d: %d weight: (%f,%f,%f)\n",d,  weight.x, weight.y, weight.z);
 				ray.start = hit.position + hit.normal * epsilon;
 				ray.dir = reflect(ray.dir, hit.normal);
-			} else return outRadiance;
+			}
+			else {
+				//printf("weight: (%f,%f,%f)\n", weight.x, weight.y, weight.z);
+				return outRadiance;
+			}
 		}
 
 		
@@ -488,6 +539,7 @@ void onInitialization() {
 	glViewport(0, 0, windowWidth, windowHeight);
 	scene.build();
 
+	printf("Rendering...\n");
 	long timeStart = glutGet(GLUT_ELAPSED_TIME);
 	scene.render(image);
 	long timeEnd = glutGet(GLUT_ELAPSED_TIME);
@@ -507,21 +559,35 @@ void onDisplay() {
 
 // Key of ASCII code pressed
 void onKeyboard(unsigned char key, int pX, int pY) {
+	bool pressed = false;
 	if (key == 'a') {
-		//printf("space\n");
 		mirror.addSide();
-		//printf("side added\n");
+		printf("Mirror side added\n");
 		scene.clear();
-		scene.build();
-		//printf("scene built\n");
-		//image = std::vector<vec4>(windowWidth * windowHeight);
+		pressed = true;
+	}
+	if (key == 's' && scene.gold) {
+		scene.clear();
+		scene.setGold(false);
+		printf("Mirrors set to silver\n");
+		pressed = true;
 
+	}
+	if (key == 'g' && !scene.gold) {
+		scene.clear();
+		scene.setGold(true);
+		printf("Mirrors set to gold\n");
+		pressed = true;
+	}
+
+	if (pressed){
+		scene.build();
+		printf("Rendering...\n");
 		long timeStart = glutGet(GLUT_ELAPSED_TIME);
 		scene.render(image);
 		long timeEnd = glutGet(GLUT_ELAPSED_TIME);
-		//printf("Rendering time: %d milliseconds\n", (timeEnd - timeStart));
+		printf("Rendering time: %d milliseconds\n", (timeEnd - timeStart));
 		fullScreenTexturedQuad.setImage(image);
-		//printf("image set\n");
 		glutPostRedisplay();
 	}
 }
