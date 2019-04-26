@@ -37,24 +37,8 @@ public:
 	vec3 ka, kd, ks;
 	float  shininess;
 	bool rough;
-	//vec3 F0;
 	Material(vec3 _ka, vec3 _kd, vec3 _ks, float _shininess, bool _rough) : ka(_ka), kd(_kd), ks(_ks), rough(_rough) {
 		shininess = _shininess; 
-		/*
-		vec3 one(1, 1, 1);
-		vec3 n(0.17, 0.35, 1.5); //arany
-		vec3 kappa(3.1, 2.7, 1.9);
-		//vec3 n(0.14, 0.16, 0.13); //ezüst
-		//vec3 kappa(4.1, 2.3, 3.1);
-		vec3 F0(0, 0, 0);
-		F0.x = ((n.x - one.x)*(n.x - one.x) + kappa.x * kappa.x) /
-			((n.x + one.x)*(n.x + one.x) + kappa.x * kappa.x);
-		F0.y = ((n.y - one.y)*(n.y - one.y) + kappa.y * kappa.y) /
-			((n.y + one.y)*(n.y + one.y) + kappa.y * kappa.y);
-		F0.z = ((n.z - one.z)*(n.z - one.z) + kappa.z * kappa.z) /
-			((n.z + one.z)*(n.z + one.z) + kappa.z * kappa.z);
-		printf("F0: (%f,%f,%f)\n", F0.x, F0.y, F0.z);
-		*/
 	}
 };
 
@@ -107,37 +91,6 @@ struct Sphere : public Intersectable {
 	}
 };
 
-/*
-struct Side : public Intersectable {
-	std::vector<vec3> r;
-	Side(Material* _material) {
-		material = _material;
-		r.push_back(vec3(-0.5, 0, 0));
-		r.push_back(vec3(0, 0.1, 1));
-		r.push_back(vec3(0.5,  0, 0));
-		
-	}
-
-	Hit intersect(const Ray& ray) {
-		Hit hit;
-		vec3 n = normalize( cross((r[1] - r[0]),(r[2] - r[0])) );
-		float t = dot((r[0] - ray.start), n) / dot(ray.dir, n);
-		vec3 p= ray.start + ray.dir * t;
-		
-		if (dot(cross(r[1] - r[0], p - r[0]), n) > 0
-			&& dot(cross(r[2] - r[1], p - r[1]), n) > 0
-			&& dot(cross(r[0] - r[2], p - r[2]), n) > 0) {
-			hit.t = t;
-			hit.position = ray.start + ray.dir * hit.t;
-			hit.normal = n;
-			hit.material = material;
-			return hit;
-		}
-
-		return hit;
-	}
-};
-*/
 
 struct Wall : public Intersectable {
 	std::vector<vec3> r;
@@ -174,7 +127,7 @@ struct PolyTube{
 	int n;
 	float d;
 	PolyTube() {
-		n = 5;
+		n = 3;
 		d = 0.4;
 	}
 	void setMaterial(Material* _material) {
@@ -199,89 +152,7 @@ struct PolyTube{
 		vec3 t1 = (vec3(cos((n-1) * 2 * M_PI / n + M_PI / 2), sin((n-1) * 2 * M_PI / n + M_PI / 2), 0))*d;
 		o.push_back(new Wall(t1, vec3(t1.x, t1.y, 2), t3, vec3(t3.x, t3.y, 2), material));
 	}
-	/*
-	Hit intersect(const Ray& ray) {
-		Hit hit;
-		for (Wall w : r) {
-			hit = w.intersect(ray);
-			if (hit.t != 0) {
-				return hit;
-			}
-		}
-
-		/*
-		for (int i = 0; i < n*2-2; i+=2){		//minden oldalra (kivéve utolsó)
-			vec3 normal = normalize(cross((r[i+1] - r[i+0]), (r[i+2] - r[i+0])));
-			float t = dot((r[i+0] - ray.start), normal) / dot(ray.dir, normal);
-			vec3 p = ray.start + ray.dir * t;
-
-			
-			if (   dot(cross(r[i + 1] - r[i + 0], p - r[i + 0]), n) > 0
-				&& dot(cross(r[i + 0] - r[i + 2], p - r[i + 2]), n) > 0
-				&& dot(cross(r[i + 2] - r[i + 3], p - r[i + 3]), n) > 0
-				&& dot(cross(r[i + 3] - r[i + 1], p - r[i + 1]), n) > 0) {
-				hit.t = t;
-				hit.position = ray.start + ray.dir * hit.t;
-				hit.normal = normal;
-				hit.material = material;
-				return hit;
-			}
-			if (dot(cross(r[i + 0] - r[i + 1], p - r[i + 0]), n) > 0
-				&& dot(cross(r[i + 2] - r[i + 0], p - r[i + 2]), n) > 0
-				&& dot(cross(r[i + 3] - r[i + 2], p - r[i + 3]), n) > 0
-				&& dot(cross(r[i + 1] - r[i + 3], p - r[i + 1]), n) > 0) {
-				hit.t = t;
-				hit.position = ray.start + ray.dir * hit.t;
-				hit.normal = normal;
-				hit.material = material;
-				return hit;
-			}
-			
-
-			/*
-			if (   dot(cross(r[i + 1] - r[i + 0], p - r[i + 0]), n) > 0
-				&& dot(cross(r[i + 2] - r[i + 1], p - r[i + 1]), n) > 0
-				&& dot(cross(r[i + 0] - r[i + 2], p - r[i + 2]), n) > 0) {
-				hit.t = t;
-				hit.position = ray.start + ray.dir * hit.t;
-				hit.normal = n;
-				hit.material = material;
-				return hit;
-			}
-			
-
-			if (   dot(cross(r[i + 0] - r[i + 1], p - r[i + 1]), n) > 0
-				&& dot(cross(r[i + 1] - r[i + 2], p - r[i + 2]), n) > 0
-				&& dot(cross(r[i + 2] - r[i + 0], p - r[i + 0]), n) > 0) {
-				hit.t = t;
-				hit.position = ray.start + ray.dir * hit.t;
-				hit.normal = n;
-				hit.material = material;
-				return hit;
-			}
-			
-		}
-
-		
-		vec3 normal = normalize(cross((r[n-1] - r[n-2]), (r[0] - r[n-2])));
-		float t = dot((r[n-2] - ray.start), normal) / dot(ray.dir, normal);
-		vec3 p = ray.start + ray.dir * t;
-
-		if (   dot(cross(r[n - 2] - r[n - 1], p - r[n - 2]), n) > 0
-			&& dot(cross(r[0    ] - r[n - 2], p - r[0    ]), n) > 0
-			&& dot(cross(r[1    ] - r[0    ], p - r[1    ]), n) > 0
-			&& dot(cross(r[n - 1] - r[1    ], p - r[n - 1]), n) > 0) {
-			hit.t = t;
-			hit.position = ray.start + ray.dir * hit.t;
-			hit.normal = normal;
-			hit.material = material;
-			return hit;
-		}
-		
-		
-		return hit;
-	}
-	*/
+	
 };
 
 class Camera {
@@ -362,8 +233,19 @@ public:
 		vec3 ka(0.4, 0.5, 0.6);
 		vec3 kd(0.5, 0.5, 0.9); 
 		vec3 ks(0.1, 0.1, 0.9);
-		Material * material = new Material(ka, kd, ks, 40, true);
-		objects.push_back(new Sphere(vec3(0, 0, 0), 0.15, material)); //
+		Material * material = new Material(ka, kd, ks, 5, true);
+		objects.push_back(new Sphere(vec3(0, 0.15, 0), 0.15, material));
+		ka = vec3(0.4, 0.5, 0.6);
+		kd = vec3(0.9, 0.5, 0.5);
+		ks = vec3(0.9, 0.1, 0.9);
+		material = new Material(ka, kd, ks, 50, true);
+		objects.push_back(new Sphere(vec3(-0.1, -0.05, 0), 0.08, material));
+		ka = vec3(0.4, 0.5, 0.6);
+		kd = vec3(0.9, 0.5, 0.9);
+		ks = vec3(0.1, 0.9, 0.1);
+		material = new Material(ka, kd, ks, 20, true);
+		objects.push_back(new Sphere(vec3(0.1, -0.05, 0), 0.1, material));
+
 
 		Material * smaterial = new Material(ka, kd, ks, 0, false);
 		mirror.setMaterial(smaterial);
